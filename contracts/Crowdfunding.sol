@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
+enum State {
+    Finished,
+    Ongoing
+}
+
 struct Campaign {
     uint256 id;
     string name;
@@ -8,8 +13,7 @@ struct Campaign {
     uint256 balance;
     address payable owner;
     uint256 donorsCount;
-    // TODO: create a state with active/ongoing, finished etc
-    bool exists;
+    State state;
     // mapping(address => uint256) donors;
 }
 
@@ -25,6 +29,7 @@ contract Crowdfunding {
     event CreateCampaign(uint256 id, string name, address owner, uint256 goal);
     event Donate(uint256 _idOfCampaign, address _address, uint256 _amount);
     event FundsClaimed(uint256 _idOfCampaign, address _owner, uint256 _amount);
+    event EndCampaign(uint256 _idOfCampaign, address _owner);
 
     constructor() {
         owner = msg.sender;
@@ -51,7 +56,7 @@ contract Crowdfunding {
             balance: 0,
             donorsCount: 0,
             owner: payable(msg.sender),
-            exists: true
+            state: State.Ongoing
         });
 
         ++indexOfCampaigns;
@@ -75,11 +80,11 @@ contract Crowdfunding {
 
     // TODO: donate
     function donate(uint256 _idOfCampaign) public payable {
-        require(msg.value > 0, "Doanted amount must be positive");
+        require(msg.value > 0, "Donated amount must be positive");
 
         Campaign storage campaign = campaigns[_idOfCampaign];
 
-        require(campaign.exists, "Campaign does not exists");
+        require(campaign.state == State.Ongoing, "Campaign does not exist");
 
         campaign.balance += msg.value;
         ++campaign.donorsCount;
@@ -104,9 +109,10 @@ contract Crowdfunding {
     }
 
     // TODO: claim funds
-    function claimFundsFromCampaign(uint256 _idOfCampaign) public {
+    function claimFundsFromCampaign(uint256 _idOfCampaign) public payable {
         Campaign storage campaign = campaigns[_idOfCampaign];
 
+        require(campaign.state == State.Ongoing, "Campaign does not exist");
         require(msg.sender == campaign.owner, "Not the owner of campaign");
         require(campaign.balance > 0, "Balance of campaign is 0");
 
@@ -118,6 +124,20 @@ contract Crowdfunding {
 
         emit FundsClaimed(_idOfCampaign, msg.sender, balance);
     }
-    // TODO: delete campaign
+
     // TODO: end campaign, claim funds, delete campaign
+    function endCampaign(uint256 _idOfCampaign) public payable {
+        Campaign storage campaign = campaigns[_idOfCampaign];
+
+        require(campaign.state == State.Ongoing, "Campaign does not exist");
+        require(msg.sender == campaign.owner, "Not the owner of campaign");
+
+        if (campaign.balance > 0) {
+            claimFundsFromCampaign(_idOfCampaign);
+        }
+
+        delete campaigns[_idOfCampaign];
+
+        emit EndCampaign(_idOfCampaign, msg.sender);
+    }
 }

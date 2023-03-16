@@ -1,8 +1,4 @@
-const {
-  time,
-  loadFixture,
-} = require("@nomicfoundation/hardhat-network-helpers");
-const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
+const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
@@ -69,7 +65,7 @@ describe("Crowdfunding", function () {
       expect(campaign.balance).to.be.equal(0);
       expect(campaign.owner).to.be.equal(account1.address);
       expect(campaign.donorsCount).to.be.equal(0);
-      expect(campaign.exists).to.be.equal(true);
+      expect(campaign.state).to.be.equal(1);
     });
 
     it("Should add new campaign to existing ones", async () => {
@@ -100,7 +96,7 @@ describe("Crowdfunding", function () {
       expect(campaign.balance).to.be.equal(0);
       expect(campaign.owner).to.be.equal(account2.address);
       expect(campaign.donorsCount).to.be.equal(0);
-      expect(campaign.exists).to.be.equal(true);
+      expect(campaign.state).to.be.equal(1);
     });
 
     it("Contract can receive ethers", async () => {
@@ -143,6 +139,36 @@ describe("Crowdfunding", function () {
         account2.address
       );
       expect(donationPerCampaign).to.be.equal(ethers.utils.parseEther("1"));
+    });
+
+    it("Can not donate 0 ethers", async () => {
+      const { crowdfunding, owner, account1, account2 } = await loadFixture(
+        deployCrowdfundingFixture
+      );
+
+      crowdfunding
+        .connect(account1)
+        .createCampaign("Test campaign", ethers.utils.parseEther("10"));
+
+      await expect(
+        crowdfunding.connect(account2).donate(0, { value: 0 })
+      ).to.be.revertedWith("Donated amount must be positive");
+    });
+
+    it("Can not donate to a campaign that does not exist", async () => {
+      const { crowdfunding, owner, account1, account2 } = await loadFixture(
+        deployCrowdfundingFixture
+      );
+
+      crowdfunding
+        .connect(account1)
+        .createCampaign("Test campaign", ethers.utils.parseEther("10"));
+
+      await expect(
+        crowdfunding
+          .connect(account2)
+          .donate(1, { value: ethers.utils.parseEther("10") })
+      ).to.be.revertedWith("Campaign does not exist");
     });
 
     it("Owner can claim funds from campaign", async () => {
@@ -218,6 +244,110 @@ describe("Crowdfunding", function () {
         crowdfunding.connect(account1).claimFundsFromCampaign(0)
       ).to.be.revertedWith("Balance of campaign is 0");
     });
+
+    it("Can not claim funds from campaign that does not exist", async () => {
+      const { crowdfunding, owner, account1, account2 } = await loadFixture(
+        deployCrowdfundingFixture
+      );
+
+      crowdfunding
+        .connect(account1)
+        .createCampaign("Test campaign", ethers.utils.parseEther("10"));
+
+      await expect(
+        crowdfunding.connect(account1).claimFundsFromCampaign(1)
+      ).to.be.revertedWith("Campaign does not exist");
+    });
+
+    it("Only owner can end campaign", async () => {
+      const { crowdfunding, owner, account1, account2 } = await loadFixture(
+        deployCrowdfundingFixture
+      );
+
+      crowdfunding
+        .connect(account1)
+        .createCampaign("Test campaign", ethers.utils.parseEther("10"));
+
+      await expect(
+        crowdfunding.connect(account2).endCampaign(0)
+      ).to.be.revertedWith("Not the owner of campaign");
+    });
+
+    it("Owner can end campaign", async () => {
+      const { crowdfunding, owner, account1, account2 } = await loadFixture(
+        deployCrowdfundingFixture
+      );
+
+      crowdfunding
+        .connect(account1)
+        .createCampaign("Test campaign", ethers.utils.parseEther("10"));
+
+      await crowdfunding
+        .connect(account2)
+        .donate(0, { value: ethers.utils.parseEther("1") });
+
+      await crowdfunding.connect(account1).endCampaign(0);
+
+      expect((await crowdfunding.getCampaign(0)).state).to.be.equal(0);
+    });
+
+    it("Owner can end campaign with no balance", async () => {
+      const { crowdfunding, owner, account1, account2 } = await loadFixture(
+        deployCrowdfundingFixture
+      );
+
+      crowdfunding
+        .connect(account1)
+        .createCampaign("Test campaign", ethers.utils.parseEther("10"));
+
+      await crowdfunding.connect(account1).endCampaign(0);
+
+      expect((await crowdfunding.getCampaign(0)).state).to.be.equal(0);
+    });
+
+    it("Can not end campaign that does not exist", async () => {
+      const { crowdfunding, owner, account1, account2 } = await loadFixture(
+        deployCrowdfundingFixture
+      );
+
+      crowdfunding
+        .connect(account1)
+        .createCampaign("Test campaign", ethers.utils.parseEther("10"));
+
+      await expect(
+        crowdfunding.connect(account1).endCampaign(1)
+      ).to.be.revertedWith("Campaign does not exist");
+    });
+
+    it("Get user donation per campaign", async () => {
+      const { crowdfunding, owner, account1, account2 } = await loadFixture(
+        deployCrowdfundingFixture
+      );
+
+      crowdfunding
+        .connect(account1)
+        .createCampaign("Test campaign 1", ethers.utils.parseEther("10"));
+
+      crowdfunding
+        .connect(account1)
+        .createCampaign("Test campaign 2", ethers.utils.parseEther("5"));
+
+      await crowdfunding
+        .connect(account2)
+        .donate(0, { value: ethers.utils.parseEther("1") });
+
+      await crowdfunding
+        .connect(account2)
+        .donate(1, { value: ethers.utils.parseEther("2") });
+
+      expect(
+        await crowdfunding.getUserDonationPerCampaign(0, account2.address)
+      ).to.be.equal(ethers.utils.parseEther("1"));
+
+      expect(
+        await crowdfunding.getUserDonationPerCampaign(1, account2.address)
+      ).to.be.equal(ethers.utils.parseEther("2"));
+    });
   });
 
   describe("Events", () => {
@@ -274,6 +404,24 @@ describe("Crowdfunding", function () {
       await expect(crowdfunding.connect(account1).claimFundsFromCampaign(0))
         .emit(crowdfunding, "FundsClaimed")
         .withArgs(0, account1.address, ethers.utils.parseEther("1"));
+    });
+
+    it("Should emit event when ending an campaign", async () => {
+      const { crowdfunding, owner, account1, account2 } = await loadFixture(
+        deployCrowdfundingFixture
+      );
+
+      crowdfunding
+        .connect(account1)
+        .createCampaign("Test campaign", ethers.utils.parseEther("10"));
+
+      await crowdfunding
+        .connect(account2)
+        .donate(0, { value: ethers.utils.parseEther("1") });
+
+      await expect(crowdfunding.connect(account1).endCampaign(0))
+        .emit(crowdfunding, "EndCampaign")
+        .withArgs(0, account1.address);
     });
   });
 
