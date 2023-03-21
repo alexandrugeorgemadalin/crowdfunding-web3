@@ -1,10 +1,9 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import HomePage from "@/components/home/home-page";
 
 export default function Home() {
   return (
     <main>
-      <h1>Hello next</h1>
-      <ConnectButton />
+      <HomePage />
     </main>
   );
 }

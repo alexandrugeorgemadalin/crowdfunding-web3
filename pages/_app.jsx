@@ -4,6 +4,7 @@ import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createClient, goerli, WagmiConfig } from "wagmi";
 import { mainnet, polygon, polygonMumbai } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
+import MainLayout from "@/components/layout/main-layout";
 
 const { chains, provider } = configureChains(
   [mainnet, polygon, goerli, polygonMumbai],
@@ -24,7 +25,9 @@ export default function CrowdfundingWeb3({ Component, pageProps }) {
   return (
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains} modalSize="compact">
-        <Component {...pageProps} />
+        <MainLayout>
+          <Component {...pageProps} />
+        </MainLayout>
       </RainbowKitProvider>
     </WagmiConfig>
   );
