@@ -14,11 +14,13 @@
     "@emotion/styled": "^11.10.6",
     "@prisma/client": "^4.11.0",
     "@rainbow-me/rainbowkit": "^0.12.1",
+    "@reduxjs/toolkit": "^1.9.3",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
     "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-redux": "^8.0.5",
     "wagmi": "^0.12.1"
   },
   "devDependencies": {

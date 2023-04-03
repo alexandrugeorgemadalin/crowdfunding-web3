@@ -3,6 +3,7 @@ import CreateCampaignForm from "@/components/create-campaign/create-campaign";
 
 export default function CreateCampaign() {
   const { address, isConnected, isDisconnected } = useAccount();
+
   if (isDisconnected === true) {
     return (
       <div>
