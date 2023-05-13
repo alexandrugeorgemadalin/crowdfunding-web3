@@ -1,6 +1,10 @@
 import "@rainbow-me/rainbowkit/styles.css";
-
-import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import "../styles/global.css";
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+  darkTheme,
+} from "@rainbow-me/rainbowkit";
 import { configureChains, createClient, goerli, WagmiConfig } from "wagmi";
 import { mainnet, polygon, polygonMumbai } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
@@ -33,7 +37,11 @@ export default function CrowdfundingWeb3({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains} modalSize="compact">
+        <RainbowKitProvider
+          chains={chains}
+          modalSize="compact"
+          theme={darkTheme()}
+        >
           <MainLayout>
             <Component {...pageProps} />
           </MainLayout>

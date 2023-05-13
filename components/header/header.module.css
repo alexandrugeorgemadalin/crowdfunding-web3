@@ -1,7 +1,8 @@
 .nav {
   height: 100;
   width: 100%;
-  background: linear-gradient(305deg, #327a62, transparent);
+  background-color: #a15e49;
+  /* background: linear-gradient(305deg, #327a62, transparent); */
   display: flex;
   align-content: center;
   justify-content: space-between;

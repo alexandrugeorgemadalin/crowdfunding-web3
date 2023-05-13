@@ -1,11 +1,13 @@
 import React from "react";
-import Header from "@/components/header/header";
+import NavBar from "../Navbar";
 
 export default function MainLayout({ children }) {
   return (
     <>
-      <Header />
-      <main>{children}</main>
+      <div className="bg-slate-700 min-h-screen">
+        <NavBar />
+        <main>{children}</main>
+      </div>
     </>
   );
 }

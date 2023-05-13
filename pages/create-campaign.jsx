@@ -6,14 +6,14 @@ export default function CreateCampaign() {
 
   if (isDisconnected === true) {
     return (
-      <div>
-        <h2>In order to create a new campaign, please connect first</h2>
+      <div align="center">
+        <h3>In order to use the platform, please connect your wallet first</h3>
       </div>
     );
   } else {
     return (
       <div>
-        <h2>Connected with address:{address}</h2>
+        <h3 align="center">Connected with address:{address}</h3>
         <CreateCampaignForm />
       </div>
     );

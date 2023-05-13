@@ -56,7 +56,7 @@ export default function Campaign({ campaignIndex }) {
   } else {
     return (
       <div className={styles.card}>
-        <div className={styles.header}>Campaign Name</div>
+        <div className={styles.header}>{campaignData.name}</div>
         <div className={styles.body}>
           <div className={styles.field}>
             <div className={styles.field_key}>ID</div>
@@ -71,7 +71,7 @@ export default function Campaign({ campaignIndex }) {
           <div className={styles.field}>
             <div className={styles.field_key}>Goal</div>
             <div className={styles.field_value}>
-              {campaignData.goal.toNumber()}
+              {ethers.utils.formatEther(campaignData.goal)}
             </div>
           </div>
           <div className={styles.field}>
