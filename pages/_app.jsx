@@ -40,7 +40,9 @@ export default function CrowdfundingWeb3({ Component, pageProps }) {
         <RainbowKitProvider
           chains={chains}
           modalSize="compact"
-          theme={darkTheme()}
+          theme={darkTheme({
+            accentColor: "#000000",
+          })}
         >
           <MainLayout>
             <Component {...pageProps} />

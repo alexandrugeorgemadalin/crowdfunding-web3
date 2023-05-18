@@ -9,11 +9,11 @@ const BreadCrumbElement = ({ name, isActive, handleClick, link }) => (
   <div onClick={handleClick}>
     <Link
       href={link}
-      className={`px-3 py-2 mx-3 mt-2 text-lg text-emerald-500 transition-colors duration-300 transform rounded-[10px] ${
+      className={`px-3 py-2 mx-3 mt-2 text-lg text-black transition-colors duration-300 transform rounded-[10px] ${
         isActive &&
         isActive === name &&
-        "bg-slate-500 ring-2 ring-offset-transparent ring-emerald-500"
-      } hover:bg-slate-500`}
+        "bg-gradient-to-b from-emerald-500 to-emerald-700 ring-2 ring-offset-transparent ring-black"
+      } hover:bg-emerald-400`}
     >
       {name}
     </Link>
@@ -31,10 +31,7 @@ export default function NavBar() {
           setIsActive("Home");
         }}
       >
-        <Image
-          src={logo}
-          className="w-[150px] h-[75px] bg-slate-500 rounded-[10px]"
-        />
+        <Image src={logo} className="w-[150px] h-[75px] rounded-[10px]" />
       </Link>
       <div className="flex flex-row items-center">
         {breadcrumbLinks.map((link, i) => (
