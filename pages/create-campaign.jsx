@@ -37,7 +37,7 @@ export default function CreateCampaign() {
     chainId: polygonMumbai.id,
   });
 
-  const { isLoading: isLoadingTransaction, isSuccess } = useWaitForTransaction({
+  const { isLoading: isLoadingTransaction } = useWaitForTransaction({
     hash: data?.hash,
     onSuccess: () => {
       dispatch(closeModal(false));
@@ -62,8 +62,12 @@ export default function CreateCampaign() {
 
   return (
     <div className="flex flex-col justify-center bg-neutral-500/70 rounded-[10px] mx-20 my-10 p-5">
-      {!modalIsClosed && <Modal />}
-      {(isLoadingWrite || isLoadingTransaction) && <Loader />}
+      {!modalIsClosed && (
+        <Modal message="Your campaign has been successfully created." />
+      )}
+      {(isLoadingWrite || isLoadingTransaction) && (
+        <Loader message="Transaction is in progress" />
+      )}
       <div className="flex justify-center items-center p-[16px] rounded-[10px]">
         <h1 className="font-mono font-bold text-[22px] leading-[38px] text-black">
           Start a campaign

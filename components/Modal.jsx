@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { closeModal } from "@/actions/modalAction";
 
-export default function Modal() {
+export default function Modal({ message }) {
   const dispatch = useDispatch();
 
   const handleCloseModal = () => {
@@ -10,9 +10,9 @@ export default function Modal() {
 
   return (
     <div className="fixed inset-0 z-10 h-screen bg-[rgba(0,0,0,0.7)] flex items-center justify-center flex-col">
-      <div className="bg-white rounded-[10px] p-8 flex flex-col justify-between-">
+      <div className="bg-white rounded-[10px] p-8 flex flex-col justify-between max-w-xl">
         <h1 className="t-[20px] font-mono font-bold text-[18px] text-black text-center">
-          Congratulations! <br /> Your campaign has been successfully created.
+          Congratulations! <br /> {message}
         </h1>
         <div className="flex flex-row justify-around pt-5">
           <button

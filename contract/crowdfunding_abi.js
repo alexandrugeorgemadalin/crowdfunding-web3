@@ -114,7 +114,7 @@ export const crowdfundingAbi = [
       { internalType: "uint256", name: "goal", type: "uint256" },
       { internalType: "uint256", name: "balance", type: "uint256" },
       { internalType: "address", name: "owner", type: "address" },
-      { internalType: "uint256", name: "donorsCount", type: "uint256" },
+      { internalType: "uint256", name: "donationsCount", type: "uint256" },
       { internalType: "uint256", name: "deadline", type: "uint256" },
       { internalType: "string", name: "description", type: "string" },
       { internalType: "enum State", name: "state", type: "uint8" },
@@ -161,6 +161,19 @@ export const crowdfundingAbi = [
   },
   {
     inputs: [
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "uint256", name: "", type: "uint256" },
+    ],
+    name: "donationsPerCampaign",
+    outputs: [
+      { internalType: "uint256", name: "amount", type: "uint256" },
+      { internalType: "address", name: "donor", type: "address" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
       { internalType: "uint256", name: "_idOfCampaign", type: "uint256" },
     ],
     name: "endCampaign",
@@ -188,7 +201,7 @@ export const crowdfundingAbi = [
           { internalType: "uint256", name: "goal", type: "uint256" },
           { internalType: "uint256", name: "balance", type: "uint256" },
           { internalType: "address", name: "owner", type: "address" },
-          { internalType: "uint256", name: "donorsCount", type: "uint256" },
+          { internalType: "uint256", name: "donationsCount", type: "uint256" },
           { internalType: "uint256", name: "deadline", type: "uint256" },
           { internalType: "string", name: "description", type: "string" },
           { internalType: "enum State", name: "state", type: "uint8" },
@@ -196,6 +209,49 @@ export const crowdfundingAbi = [
         internalType: "struct Campaign",
         name: "",
         type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getCampaigns",
+    outputs: [
+      {
+        components: [
+          { internalType: "uint256", name: "id", type: "uint256" },
+          { internalType: "string", name: "name", type: "string" },
+          { internalType: "uint256", name: "goal", type: "uint256" },
+          { internalType: "uint256", name: "balance", type: "uint256" },
+          { internalType: "address", name: "owner", type: "address" },
+          { internalType: "uint256", name: "donationsCount", type: "uint256" },
+          { internalType: "uint256", name: "deadline", type: "uint256" },
+          { internalType: "string", name: "description", type: "string" },
+          { internalType: "enum State", name: "state", type: "uint8" },
+        ],
+        internalType: "struct Campaign[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_idOfCampaign", type: "uint256" },
+    ],
+    name: "getDonationsPerCampaign",
+    outputs: [
+      {
+        components: [
+          { internalType: "uint256", name: "amount", type: "uint256" },
+          { internalType: "address", name: "donor", type: "address" },
+        ],
+        internalType: "struct Donation[]",
+        name: "",
+        type: "tuple[]",
       },
     ],
     stateMutability: "view",
