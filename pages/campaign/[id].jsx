@@ -5,12 +5,13 @@ import { polygonMumbai } from "wagmi/chains";
 import { ethers } from "ethers";
 import { useState } from "react";
 import Loader from "@/components/Loader";
-import { useContractReads } from "wagmi";
+import { useContractReads, useAccount } from "wagmi";
 import InfoBox from "@/components/InfoBox";
 import { daysLeft, countBackers } from "@/utils";
 import ProgressBar from "@/components/ProgressBar";
 import DonateCard from "@/components/DonateCard";
 import CampaignInfo from "@/components/CampaignInfo";
+import FinishCampaignCard from "@/components/FinishCampaignCard";
 
 export default function Campaign() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function Campaign() {
   const [remainingDays, setRemainingDays] = useState(0);
   const [donations, setDonations] = useState([]);
   const [backers, setBackers] = useState(0);
+  const { isConnected, address } = useAccount();
 
   const readFromContract = useContractReads({
     contracts: [
@@ -107,6 +109,9 @@ export default function Campaign() {
             />
             <div className="flex-1">
               <DonateCard idOfCampaign={id} />
+              {isConnected && address === campaign.owner && (
+                <FinishCampaignCard idOfCampaign={id} />
+              )}
             </div>
           </div>
         </div>

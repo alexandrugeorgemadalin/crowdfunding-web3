@@ -52,10 +52,13 @@ export default function DonateCard({ idOfCampaign }) {
   };
 
   return (
-    <div className="flex flex-col p-4 bg-[#13131a] rounded-[10px]">
-      {!modalIsClosed && (
-        <Modal message="Your support is making a meaningful difference in the lives of others." />
-      )}
+    <div className="flex flex-col p-4 bg-[#13131a] rounded-[10px] mb-[10px]">
+      <div className="absolute bottom-0 left-0">
+        {!modalIsClosed && (
+          <Modal message="Your support is making a meaningful difference in the lives of others." />
+        )}
+      </div>
+
       {(isLoadingWrite || isLoadingTransaction) && (
         <Loader message="Transaction is in progress" />
       )}
