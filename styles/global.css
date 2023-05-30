@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply bg-gradient-to-t from-gray-700 to-emerald-500 to-100% min-h-screen;
+}

@@ -12,6 +12,9 @@ import ProgressBar from "@/components/ProgressBar";
 import DonateCard from "@/components/DonateCard";
 import CampaignInfo from "@/components/CampaignInfo";
 import FinishCampaignCard from "@/components/FinishCampaignCard";
+import { useSelector, useDispatch } from "react-redux";
+import { closeDonateModal } from "@/actions/donateModalAction";
+import Modal from "@/components/Modal";
 
 export default function Campaign() {
   const router = useRouter();
@@ -22,6 +25,15 @@ export default function Campaign() {
   const [donations, setDonations] = useState([]);
   const [backers, setBackers] = useState(0);
   const { isConnected, address } = useAccount();
+  const dispatch = useDispatch();
+
+  const donateModalIsClosed = useSelector(
+    (state) => state.donateModalIsClosed.donateModalIsClosed
+  );
+
+  const donateIsLoading = useSelector(
+    (state) => state.donateIsLoading.donateIsLoading
+  );
 
   const readFromContract = useContractReads({
     contracts: [
@@ -69,6 +81,16 @@ export default function Campaign() {
   return (
     <div>
       {isLoading && <Loader message="Fetching campaign data" />}
+      {donateIsLoading && <Loader message="Transaction is in progress" />}
+      {!donateModalIsClosed && (
+        <Modal
+          message="Your support is making a meaningful difference in the lives of others."
+          handleCloseModal={() => {
+            dispatch(closeDonateModal(true));
+          }}
+        />
+      )}
+
       <div className="flex flex-col justify-center rounded-[15px] mx-20 my-10 p-10 bg-gray-500 bg-opacity-30 backdrop-blur-lg drop-shadow-lg">
         <div className="flex justify-center items-center p-[16px]">
           <h1 className="font-epilogue font-bold text-[30px] text-black">

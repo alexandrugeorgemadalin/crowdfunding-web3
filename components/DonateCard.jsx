@@ -4,45 +4,44 @@ import { polygonMumbai } from "wagmi/chains";
 import { ethers } from "ethers";
 import { useAccount, useContractWrite, useWaitForTransaction } from "wagmi";
 import { useState } from "react";
-import Modal from "@/components/Modal";
-import { useSelector, useDispatch } from "react-redux";
-import Loader from "@/components/Loader";
-import { closeModal } from "@/actions/modalAction";
+import { useDispatch } from "react-redux";
+import { closeDonateModal } from "@/actions/donateModalAction";
+import { setDonateLoader } from "@/actions/donateLoaderAction";
 
 export default function DonateCard({ idOfCampaign }) {
   const { isDisconnected } = useAccount();
   const dispatch = useDispatch();
 
   const [donatedAmount, setDonatedAmount] = useState(0);
-  const modalIsClosed = useSelector(
-    (state) => state.modalIsClosed.modalIsClosed
-  );
 
   const handleDonatedAmountInput = (event) => {
     setDonatedAmount(Number(event.target.value));
   };
 
-  const {
-    data,
-    isLoading: isLoadingWrite,
-    write,
-  } = useContractWrite({
+  const { data, write } = useContractWrite({
     mode: "recklesslyUnprepared",
     address: CROWDFUNDING_ADDRESS,
     abi: crowdfundingAbi,
     functionName: "donate",
     chainId: polygonMumbai.id,
+    onError: () => {
+      dispatch(setDonateLoader(false));
+    },
   });
 
-  const { isLoading: isLoadingTransaction } = useWaitForTransaction({
+  const transactionWait = useWaitForTransaction({
     hash: data?.hash,
     onSuccess: () => {
-      dispatch(closeModal(false));
+      dispatch(closeDonateModal(false));
+    },
+    onSettled: () => {
+      dispatch(setDonateLoader(false));
     },
   });
 
   const handleDonate = (e) => {
     e.preventDefault();
+    dispatch(setDonateLoader(true));
     write({
       recklesslySetUnpreparedArgs: [idOfCampaign],
       recklesslySetUnpreparedOverrides: {
@@ -53,15 +52,6 @@ export default function DonateCard({ idOfCampaign }) {
 
   return (
     <div className="flex flex-col p-4 bg-[#13131a] rounded-[10px] mb-[10px]">
-      <div className="absolute bottom-0 left-0">
-        {!modalIsClosed && (
-          <Modal message="Your support is making a meaningful difference in the lives of others." />
-        )}
-      </div>
-
-      {(isLoadingWrite || isLoadingTransaction) && (
-        <Loader message="Transaction is in progress" />
-      )}
       <p className="font-epilogue font-semibold text-[18px] text-white uppercase leading-[30px] text-center">
         Fund the campaign
       </p>

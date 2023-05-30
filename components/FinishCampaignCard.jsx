@@ -1,20 +1,17 @@
 import { crowdfundingAbi } from "@/contract/crowdfunding_abi";
 import { CROWDFUNDING_ADDRESS } from "@/contract/constants";
 import { polygonMumbai } from "wagmi/chains";
-import { ethers } from "ethers";
 import {
-  useAccount,
   useContractWrite,
   usePrepareContractWrite,
   useWaitForTransaction,
 } from "wagmi";
-import { useState } from "react";
 import Modal from "@/components/Modal";
 import { useSelector, useDispatch } from "react-redux";
 import Loader from "@/components/Loader";
 import { closeModal } from "@/actions/modalAction";
 
-export default function DonateCard({ idOfCampaign }) {
+export default function FinishCampaignCard({ idOfCampaign }) {
   const dispatch = useDispatch();
 
   const modalIsClosed = useSelector(
@@ -40,9 +37,9 @@ export default function DonateCard({ idOfCampaign }) {
 
   return (
     <div className="flex flex-col p-4 bg-[#13131a] rounded-[10px]">
-      {!modalIsClosed && (
+      {/* {!modalIsClosed && (
         <Modal message="The funds you have claimed will be available in your wallet shortly." />
-      )}
+      )} */}
       {(isLoadingWrite || isLoadingTransaction) && (
         <Loader message="Transaction is in progress" />
       )}

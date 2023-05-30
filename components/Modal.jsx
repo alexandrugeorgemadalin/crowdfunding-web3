@@ -1,12 +1,12 @@
 import { useDispatch } from "react-redux";
 import { closeModal } from "@/actions/modalAction";
 
-export default function Modal({ message }) {
+export default function Modal({ message, handleCloseModal }) {
   const dispatch = useDispatch();
 
-  const handleCloseModal = () => {
-    dispatch(closeModal(true));
-  };
+  // const handleCloseModal = () => {
+  //   dispatch(closeModal(true));
+  // };
 
   return (
     <div className="fixed inset-0 z-10 h-screen bg-[rgba(0,0,0,0.7)] flex items-center justify-center flex-col">

@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Loader({ message }) {
   return (
-    <div className="fixed inset-0 min-w-full min-h-full z-10  bg-[rgba(0,0,0,0.7)] flex items-center justify-center flex-col">
+    <div className="fixed inset-0 min-w-full min-h-full z-10  bg-[rgba(0,0,0,0.7)] backdrop-blur-sm flex items-center justify-center flex-col">
       <Image
         src={loader}
         alt="loader"

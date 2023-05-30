@@ -63,7 +63,12 @@ export default function CreateCampaign() {
   return (
     <div className="flex flex-col justify-center bg-neutral-500/70 rounded-[10px] mx-20 my-10 p-5">
       {!modalIsClosed && (
-        <Modal message="Your campaign has been successfully created." />
+        <Modal
+          message="Your campaign has been successfully created."
+          handleCloseModal={() => {
+            dispatch(closeModal(true));
+          }}
+        />
       )}
       {(isLoadingWrite || isLoadingTransaction) && (
         <Loader message="Transaction is in progress" />
