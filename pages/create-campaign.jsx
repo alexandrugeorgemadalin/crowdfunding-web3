@@ -1,7 +1,11 @@
 import FormField from "../components/FormField";
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import {
+  useContractWrite,
+  useWaitForTransaction,
+  useContractRead,
+} from "wagmi";
 import { CROWDFUNDING_ADDRESS } from "@/contract/constants";
 import { crowdfundingAbi } from "@/contract/crowdfunding_abi";
 import { polygonMumbai } from "wagmi/chains";
@@ -10,11 +14,14 @@ import Loader from "@/components/Loader";
 import Modal from "@/components/Modal";
 import { useSelector, useDispatch } from "react-redux";
 import { closeModal } from "@/actions/modalAction";
+import { Web3Storage } from "web3.storage";
 
 export default function CreateCampaign() {
   const dispatch = useDispatch();
-
+  const [uploading, setUploading] = useState(false);
+  const [indexOfCampaign, setIndexOfCampaign] = useState(undefined);
   const { isDisconnected } = useAccount();
+
   const modalIsClosed = useSelector(
     (state) => state.modalIsClosed.modalIsClosed
   );
@@ -23,6 +30,17 @@ export default function CreateCampaign() {
     description: "",
     target: "",
     deadline: "",
+    image: null,
+  });
+
+  const readIndexOfCampaign = useContractRead({
+    address: CROWDFUNDING_ADDRESS,
+    abi: crowdfundingAbi,
+    functionName: "indexOfCampaigns",
+    chainId: polygonMumbai.id,
+    onSuccess: (data) => {
+      setIndexOfCampaign(data.toString());
+    },
   });
 
   const {
@@ -45,17 +63,46 @@ export default function CreateCampaign() {
   });
 
   const handleFormFieldChange = (field, e) => {
-    setForm({ ...form, [field]: e.target.value });
+    if (field === "image") {
+      const image = new File([e.target.files[0]], "test_file", {
+        type: e.target.files[0].type,
+      });
+      setForm({ ...form, [field]: image });
+    } else {
+      setForm({ ...form, [field]: e.target.value });
+    }
   };
 
-  const handleSubmit = (e) => {
+  // https://dweb.link/ipfs/bafybeihqofvcf2cl2mr7fv7cgt3yhv6mop4grmk7zffvoxdhitubg2r74i
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!form.image) {
+      return;
+    }
+
+    if (indexOfCampaign === undefined) {
+      console.log("Unable to retrieve index of campaign from contract");
+      return;
+    }
+
+    setUploading(true);
+    const client = new Web3Storage({
+      token: process.env.NEXT_PUBLIC_WEB3_STORAGE_API_KEY,
+    });
+    const cid = await client.put([form.image]);
+
+    const url = `https://dweb.link/ipfs/${cid}/${form.image.name}`;
+
+    setUploading(false);
+
     write({
       recklesslySetUnpreparedArgs: [
         form.title,
         ethers.utils.parseEther(form.target),
         new Date(form.deadline).getTime(),
         form.description,
+        url,
       ],
     });
   };
@@ -70,6 +117,7 @@ export default function CreateCampaign() {
           }}
         />
       )}
+      {uploading && <Loader message="Uploading image to IPFS" />}
       {(isLoadingWrite || isLoadingTransaction) && (
         <Loader message="Transaction is in progress" />
       )}
@@ -115,6 +163,17 @@ export default function CreateCampaign() {
             value={form.deadline}
             handleChange={(e) => handleFormFieldChange("deadline", e)}
           />
+        </div>
+
+        <div className="flex justify-center">
+          <div className="w-1/2">
+            <FormField
+              labelName="Choose a image to upload*"
+              inputType="file"
+              value={form.image}
+              handleChange={(e) => handleFormFieldChange("image", e)}
+            />
+          </div>
         </div>
 
         <div className="flex justify-center items-center mt-[40px]">

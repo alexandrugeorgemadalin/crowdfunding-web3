@@ -15,6 +15,7 @@ import FinishCampaignCard from "@/components/FinishCampaignCard";
 import { useSelector, useDispatch } from "react-redux";
 import { closeDonateModal } from "@/actions/donateModalAction";
 import Modal from "@/components/Modal";
+import Image from "next/image";
 
 export default function Campaign() {
   const router = useRouter();
@@ -62,6 +63,7 @@ export default function Campaign() {
         owner: data[0].owner,
         donationsCount: data[0].donationsCount.toString(),
         description: data[0].description,
+        image_url: data[0].imageURL,
       });
       setRemainingDays(daysLeft(data[0].deadline.toNumber()));
 
@@ -92,29 +94,29 @@ export default function Campaign() {
       )}
 
       <div className="flex flex-col justify-center rounded-[15px] mx-20 my-10 p-10 bg-gray-500 bg-opacity-30 backdrop-blur-lg drop-shadow-lg">
-        <div className="flex justify-center items-center p-[16px]">
-          <h1 className="font-epilogue font-bold text-[30px] text-black">
-            {campaign.title}
-          </h1>
-        </div>
-
-        <div className="flex flex-col justify-center px-[150px] pt-[70px] gap-10">
-          <div className="flex flex-row justify-center gap-10">
-            <div className="flex">
-              <InfoBox
-                value={campaign.balance}
-                description={`Raised out of ${campaign.target}`}
-              />
-            </div>
-
-            <div className="flex flex-col gap-10 ">
-              <div>
-                <ProgressBar
-                  raised={campaign.balance}
-                  target={campaign.target}
+        <div className="mx-10">
+          <div className="flex justify-center items-center p-[16px]">
+            <h1 className="font-epilogue font-bold text-[30px] text-black">
+              {campaign.title}
+            </h1>
+          </div>
+          <div className="flex flex-col justify-center px-[150px] pt-[70px] gap-7">
+            <div className="flex lg:flex-row flex-col gap-5 justify-between">
+              <div className="flex flex-1 relative">
+                <Image
+                  src={campaign.image_url}
+                  alt="campaign_image"
+                  fill="responsive"
+                  className="rounded-xl"
                 />
               </div>
-              <div className="flex flex-row justify-around gap-10">
+
+              <div className="flex flex-col gap-5">
+                <InfoBox
+                  value={campaign.balance}
+                  description={`Raised out of ${campaign.target}`}
+                />
+
                 <InfoBox value={remainingDays} description="Days Left" />
                 <InfoBox value={backers} description="Total backers" />
                 <InfoBox
@@ -123,17 +125,22 @@ export default function Campaign() {
                 />
               </div>
             </div>
-          </div>
-          <div className="mt-[20px] flex flex-wrap lg:flex-row flex-col gap-5">
-            <CampaignInfo
-              description={campaign.description}
-              donations={donations}
-            />
-            <div className="flex-1">
-              <DonateCard idOfCampaign={id} />
-              {isConnected && address === campaign.owner && (
+
+            <div>
+              <ProgressBar raised={campaign.balance} target={campaign.target} />
+            </div>
+
+            <div className="flex flex-wrap lg:flex-row flex-col gap-5">
+              <CampaignInfo
+                description={campaign.description}
+                donations={donations}
+              />
+              <div className="flex-1">
+                <DonateCard idOfCampaign={id} />
+                {/* {isConnected && address === campaign.owner && (
                 <FinishCampaignCard idOfCampaign={id} />
-              )}
+              )} */}
+              </div>
             </div>
           </div>
         </div>

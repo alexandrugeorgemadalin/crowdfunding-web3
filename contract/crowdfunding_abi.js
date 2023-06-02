@@ -1,12 +1,17 @@
 export const crowdfundingAbi = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
+  { inputs: [], name: "AmountMustBePositive", type: "error" },
   { inputs: [], name: "BalanceOfCampaignIsZero", type: "error" },
   { inputs: [], name: "CampaignDoesNotExist", type: "error" },
   { inputs: [], name: "CampaignFinished", type: "error" },
   { inputs: [], name: "CampaignNotFinished", type: "error" },
+  { inputs: [], name: "CannotSendFundsToAddressZero", type: "error" },
+  { inputs: [], name: "CannotSendFundsToOwner", type: "error" },
   { inputs: [], name: "DeadlineMustBeInFuture", type: "error" },
+  { inputs: [], name: "DescriptionCannotBeEmpty", type: "error" },
   { inputs: [], name: "DonatedAmountMustBePositive", type: "error" },
   { inputs: [], name: "FailedToSendEther", type: "error" },
+  { inputs: [], name: "InsufficientFunds", type: "error" },
   { inputs: [], name: "NotTheOwnerOfCampaign", type: "error" },
   { inputs: [], name: "NotTheOwnerOfContract", type: "error" },
   {
@@ -31,6 +36,12 @@ export const crowdfundingAbi = [
         internalType: "uint256",
         name: "deadline",
         type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "description",
+        type: "string",
       },
     ],
     name: "CreateCampaign",
@@ -101,8 +112,20 @@ export const crowdfundingAbi = [
         name: "_amount",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "_description",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "_recipient",
+        type: "address",
+      },
     ],
-    name: "FundsClaimed",
+    name: "UsedFunds",
     type: "event",
   },
   {
@@ -117,7 +140,8 @@ export const crowdfundingAbi = [
       { internalType: "uint256", name: "donationsCount", type: "uint256" },
       { internalType: "uint256", name: "deadline", type: "uint256" },
       { internalType: "string", name: "description", type: "string" },
-      { internalType: "enum State", name: "state", type: "uint8" },
+      { internalType: "bool", name: "isNotFinished", type: "bool" },
+      { internalType: "string", name: "imageURL", type: "string" },
     ],
     stateMutability: "view",
     type: "function",
@@ -131,19 +155,11 @@ export const crowdfundingAbi = [
   },
   {
     inputs: [
-      { internalType: "uint256", name: "_idOfCampaign", type: "uint256" },
-    ],
-    name: "claimFundsFromCampaign",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       { internalType: "string", name: "_nameOfCampaign", type: "string" },
       { internalType: "uint256", name: "_goalOfCampaign", type: "uint256" },
       { internalType: "uint256", name: "_deadline", type: "uint256" },
       { internalType: "string", name: "_description", type: "string" },
+      { internalType: "string", name: "_imageURL", type: "string" },
     ],
     name: "createCampaign",
     outputs: [],
@@ -204,7 +220,8 @@ export const crowdfundingAbi = [
           { internalType: "uint256", name: "donationsCount", type: "uint256" },
           { internalType: "uint256", name: "deadline", type: "uint256" },
           { internalType: "string", name: "description", type: "string" },
-          { internalType: "enum State", name: "state", type: "uint8" },
+          { internalType: "bool", name: "isNotFinished", type: "bool" },
+          { internalType: "string", name: "imageURL", type: "string" },
         ],
         internalType: "struct Campaign",
         name: "",
@@ -228,7 +245,8 @@ export const crowdfundingAbi = [
           { internalType: "uint256", name: "donationsCount", type: "uint256" },
           { internalType: "uint256", name: "deadline", type: "uint256" },
           { internalType: "string", name: "description", type: "string" },
-          { internalType: "enum State", name: "state", type: "uint8" },
+          { internalType: "bool", name: "isNotFinished", type: "bool" },
+          { internalType: "string", name: "imageURL", type: "string" },
         ],
         internalType: "struct Campaign[]",
         name: "",
@@ -260,6 +278,26 @@ export const crowdfundingAbi = [
   {
     inputs: [
       { internalType: "uint256", name: "_idOfCampaign", type: "uint256" },
+    ],
+    name: "getTransactionsPerCampaign",
+    outputs: [
+      {
+        components: [
+          { internalType: "uint256", name: "amount", type: "uint256" },
+          { internalType: "address", name: "recipient", type: "address" },
+          { internalType: "string", name: "description", type: "string" },
+        ],
+        internalType: "struct Transaction[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_idOfCampaign", type: "uint256" },
       { internalType: "address", name: "_user", type: "address" },
     ],
     name: "getUserDonationPerCampaign",
@@ -279,6 +317,32 @@ export const crowdfundingAbi = [
     name: "owner",
     outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "uint256", name: "", type: "uint256" },
+    ],
+    name: "transactionsPerCampaign",
+    outputs: [
+      { internalType: "uint256", name: "amount", type: "uint256" },
+      { internalType: "address", name: "recipient", type: "address" },
+      { internalType: "string", name: "description", type: "string" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_idOfCampaign", type: "uint256" },
+      { internalType: "uint256", name: "_amount", type: "uint256" },
+      { internalType: "string", name: "_description", type: "string" },
+      { internalType: "address payable", name: "recipient", type: "address" },
+    ],
+    name: "useFunds",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

@@ -3,6 +3,9 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
-}
+  images: {
+    domains: ["dweb.link"],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
