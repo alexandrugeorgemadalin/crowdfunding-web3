@@ -1,7 +1,7 @@
 export const daysLeft = (deadline) => {
   const remainingDays = (deadline - Date.now()) / (1000 * 60 * 60 * 24);
 
-  return remainingDays.toFixed(0);
+  return Math.max(remainingDays.toFixed(0), 0);
 };
 
 export const countBackers = (donations) => {

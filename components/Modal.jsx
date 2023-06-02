@@ -9,7 +9,7 @@ export default function Modal({ message, handleCloseModal }) {
   // };
 
   return (
-    <div className="fixed inset-0 z-10 h-screen bg-[rgba(0,0,0,0.7)] flex items-center justify-center flex-col">
+    <div className="fixed inset-0 z-10 h-screen bg-[rgba(0,0,0,0.7)] flex items-center justify-center flex-col backdrop-blur-sm">
       <div className="bg-white rounded-[10px] p-8 flex flex-col justify-between max-w-xl">
         <h1 className="t-[20px] font-mono font-bold text-[18px] text-black text-center">
           Congratulations! <br /> {message}

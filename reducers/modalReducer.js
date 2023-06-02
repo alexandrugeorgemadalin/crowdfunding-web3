@@ -1,5 +1,6 @@
 const initState = {
   modalIsClosed: true,
+  modalMessage: "",
 };
 
 const modalReducer = (state = initState, action) => {
@@ -8,6 +9,7 @@ const modalReducer = (state = initState, action) => {
       return {
         ...state,
         modalIsClosed: action.payload.modalIsClosed,
+        modalMessage: action.payload.modalMessage,
       };
     default:
       return { ...state };

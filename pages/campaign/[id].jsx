@@ -13,9 +13,11 @@ import DonateCard from "@/components/DonateCard";
 import CampaignInfo from "@/components/CampaignInfo";
 import FinishCampaignCard from "@/components/FinishCampaignCard";
 import { useSelector, useDispatch } from "react-redux";
-import { closeDonateModal } from "@/actions/donateModalAction";
+import { closeModal } from "@/actions/modalAction";
 import Modal from "@/components/Modal";
 import Image from "next/image";
+import UseFundsCard from "@/components/UseFundsCard";
+import TransactionsInfo from "@/components/TransactionsInfo";
 
 export default function Campaign() {
   const router = useRouter();
@@ -24,17 +26,16 @@ export default function Campaign() {
   const [isLoading, setIsLoading] = useState(true);
   const [remainingDays, setRemainingDays] = useState(0);
   const [donations, setDonations] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [backers, setBackers] = useState(0);
   const { isConnected, address } = useAccount();
   const dispatch = useDispatch();
 
-  const donateModalIsClosed = useSelector(
-    (state) => state.donateModalIsClosed.donateModalIsClosed
-  );
+  const modalMessage = useSelector((state) => state.modal.modalMessage);
+  const modalIsClosed = useSelector((state) => state.modal.modalIsClosed);
 
-  const donateIsLoading = useSelector(
-    (state) => state.donateIsLoading.donateIsLoading
-  );
+  const loader = useSelector((state) => state.loader.isLoading);
+  const loaderMessage = useSelector((state) => state.loader.loaderMessage);
 
   const readFromContract = useContractReads({
     contracts: [
@@ -52,6 +53,13 @@ export default function Campaign() {
         functionName: "getDonationsPerCampaign",
         args: [id],
       },
+      {
+        address: CROWDFUNDING_ADDRESS,
+        abi: crowdfundingAbi,
+        chainId: polygonMumbai.id,
+        functionName: "getTransactionsPerCampaign",
+        args: [id],
+      },
     ],
     watch: true,
     onSuccess: (data) => {
@@ -64,6 +72,8 @@ export default function Campaign() {
         donationsCount: data[0].donationsCount.toString(),
         description: data[0].description,
         image_url: data[0].imageURL,
+        isNotFinished: data[0].isNotFinished,
+        raised: ethers.utils.formatEther(data[0].raised),
       });
       setRemainingDays(daysLeft(data[0].deadline.toNumber()));
 
@@ -75,6 +85,17 @@ export default function Campaign() {
           };
         })
       );
+
+      setTransactions(
+        data[2].map((transaction) => {
+          return {
+            amount: ethers.utils.formatEther(transaction[0]),
+            recipient: transaction[1],
+            description: transaction[2],
+          };
+        })
+      );
+
       setBackers(countBackers(data[1]));
       setIsLoading(false);
     },
@@ -83,12 +104,12 @@ export default function Campaign() {
   return (
     <div>
       {isLoading && <Loader message="Fetching campaign data" />}
-      {donateIsLoading && <Loader message="Transaction is in progress" />}
-      {!donateModalIsClosed && (
+      {loader && <Loader message={loaderMessage} />}
+      {!modalIsClosed && (
         <Modal
-          message="Your support is making a meaningful difference in the lives of others."
+          message={modalMessage}
           handleCloseModal={() => {
-            dispatch(closeDonateModal(true));
+            dispatch(closeModal(true, ""));
           }}
         />
       )}
@@ -112,12 +133,27 @@ export default function Campaign() {
               </div>
 
               <div className="flex flex-col gap-5">
-                <InfoBox
-                  value={campaign.balance}
-                  description={`Raised out of ${campaign.target}`}
-                />
+                {campaign.isNotFinished ? (
+                  <InfoBox
+                    value={campaign.balance}
+                    description={`Raised out of ${campaign.target}`}
+                  />
+                ) : (
+                  <InfoBox
+                    value={campaign.raised}
+                    description={`Raised out of ${campaign.target}`}
+                  />
+                )}
 
-                <InfoBox value={remainingDays} description="Days Left" />
+                {campaign.isNotFinished ? (
+                  <InfoBox value={remainingDays} description="Days Left" />
+                ) : (
+                  <InfoBox
+                    value={campaign.balance}
+                    description="Available balance"
+                  />
+                )}
+
                 <InfoBox value={backers} description="Total backers" />
                 <InfoBox
                   value={campaign.donationsCount}
@@ -126,22 +162,47 @@ export default function Campaign() {
               </div>
             </div>
 
-            <div>
-              <ProgressBar raised={campaign.balance} target={campaign.target} />
-            </div>
-
-            <div className="flex flex-wrap lg:flex-row flex-col gap-5">
-              <CampaignInfo
-                description={campaign.description}
-                donations={donations}
-              />
-              <div className="flex-1">
-                <DonateCard idOfCampaign={id} />
-                {/* {isConnected && address === campaign.owner && (
-                <FinishCampaignCard idOfCampaign={id} />
-              )} */}
+            {campaign.isNotFinished ? (
+              <div className="flex flex-col gap-5">
+                <div>
+                  <ProgressBar
+                    raised={campaign.balance}
+                    target={campaign.target}
+                  />
+                </div>
+                <div className="flex flex-wrap lg:flex-row flex-col gap-5">
+                  <CampaignInfo
+                    description={campaign.description}
+                    donations={donations}
+                  />
+                  <div className="flex-1">
+                    <DonateCard idOfCampaign={id} />
+                    {isConnected && address === campaign.owner && (
+                      <FinishCampaignCard idOfCampaign={id} />
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div>
+                {isConnected && address === campaign.owner ? (
+                  <div className="flex flex-col gap-5">
+                    <div className="flex flex-row gap-5">
+                      <UseFundsCard idOfCampaign={id} />
+                      <TransactionsInfo transactions={transactions} />
+                    </div>
+                    <div>
+                      <CampaignInfo
+                        description={campaign.description}
+                        donations={donations}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div> CAMPAIGN ENDED FOR USERS </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

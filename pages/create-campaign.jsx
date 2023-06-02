@@ -22,9 +22,9 @@ export default function CreateCampaign() {
   const [indexOfCampaign, setIndexOfCampaign] = useState(undefined);
   const { isDisconnected } = useAccount();
 
-  const modalIsClosed = useSelector(
-    (state) => state.modalIsClosed.modalIsClosed
-  );
+  const modalIsClosed = useSelector((state) => state.modal.modalIsClosed);
+  const modalMessage = useSelector((state) => state.modal.modalMessage);
+
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -58,22 +58,27 @@ export default function CreateCampaign() {
   const { isLoading: isLoadingTransaction } = useWaitForTransaction({
     hash: data?.hash,
     onSuccess: () => {
-      dispatch(closeModal(false));
+      dispatch(
+        closeModal(false, "Your campaign has been successfully created.")
+      );
     },
   });
 
   const handleFormFieldChange = (field, e) => {
     if (field === "image") {
-      const image = new File([e.target.files[0]], "test_file", {
-        type: e.target.files[0].type,
-      });
+      const image = new File(
+        [e.target.files[0]],
+        `campaign_${indexOfCampaign}`,
+        {
+          type: e.target.files[0].type,
+        }
+      );
       setForm({ ...form, [field]: image });
     } else {
       setForm({ ...form, [field]: e.target.value });
     }
   };
 
-  // https://dweb.link/ipfs/bafybeihqofvcf2cl2mr7fv7cgt3yhv6mop4grmk7zffvoxdhitubg2r74i
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -111,7 +116,7 @@ export default function CreateCampaign() {
     <div className="flex flex-col justify-center bg-neutral-500/70 rounded-[10px] mx-20 my-10 p-5">
       {!modalIsClosed && (
         <Modal
-          message="Your campaign has been successfully created."
+          message={modalMessage}
           handleCloseModal={() => {
             dispatch(closeModal(true));
           }}
