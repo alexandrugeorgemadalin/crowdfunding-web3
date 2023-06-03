@@ -10,14 +10,15 @@ import InfoBox from "@/components/InfoBox";
 import { daysLeft, countBackers } from "@/utils";
 import ProgressBar from "@/components/ProgressBar";
 import DonateCard from "@/components/DonateCard";
-import CampaignInfo from "@/components/CampaignInfo";
 import FinishCampaignCard from "@/components/FinishCampaignCard";
 import { useSelector, useDispatch } from "react-redux";
 import { closeModal } from "@/actions/modalAction";
 import Modal from "@/components/Modal";
 import Image from "next/image";
 import UseFundsCard from "@/components/UseFundsCard";
-import TransactionsInfo from "@/components/TransactionsInfo";
+import TransactionsTable from "@/components/TransactionsTable";
+import DonationsTable from "@/components/DonationsTable";
+import StoryCard from "@/components/StoryCard";
 
 export default function Campaign() {
   const router = useRouter();
@@ -171,10 +172,10 @@ export default function Campaign() {
                   />
                 </div>
                 <div className="flex flex-wrap lg:flex-row flex-col gap-5">
-                  <CampaignInfo
-                    description={campaign.description}
-                    donations={donations}
-                  />
+                  <div className="flex-[2] flex flex-col gap-[40px] bg-[#13131a] p-3 rounded-[15px]">
+                    <StoryCard description={campaign.description} />
+                    <DonationsTable donations={donations} />
+                  </div>
                   <div className="flex-1">
                     <DonateCard idOfCampaign={id} />
                     {isConnected && address === campaign.owner && (
@@ -186,20 +187,32 @@ export default function Campaign() {
             ) : (
               <div>
                 {isConnected && address === campaign.owner ? (
-                  <div className="flex flex-col gap-5">
+                  <div className="flex flex-col gap-5 flex-grow">
                     <div className="flex flex-row gap-5">
-                      <UseFundsCard idOfCampaign={id} />
-                      <TransactionsInfo transactions={transactions} />
+                      <div className="basis-1/2">
+                        <UseFundsCard idOfCampaign={id} />
+                      </div>
+                      <div className="basis-1/2 ">
+                        <div className="flex-[2] flex flex-col gap-[40px] bg-[#13131a] p-3 rounded-[15px]">
+                          <StoryCard description={campaign.description} />
+                          <DonationsTable donations={donations} />
+                        </div>
+                      </div>
                     </div>
                     <div>
-                      <CampaignInfo
-                        description={campaign.description}
-                        donations={donations}
-                      />
+                      <TransactionsTable transactions={transactions} />
                     </div>
                   </div>
                 ) : (
-                  <div> CAMPAIGN ENDED FOR USERS </div>
+                  <div className="flex flex-col gap-5">
+                    <div className="flex-[2] flex flex-row gap-4 bg-[#13131a] p-3 rounded-[15px]">
+                      <StoryCard description={campaign.description} />
+                      <DonationsTable donations={donations} />
+                    </div>
+                    <div>
+                      <TransactionsTable transactions={transactions} />
+                    </div>
+                  </div>
                 )}
               </div>
             )}

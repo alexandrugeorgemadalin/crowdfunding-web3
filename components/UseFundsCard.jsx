@@ -62,7 +62,7 @@ export default function UseFundsCard({ idOfCampaign }) {
   };
 
   return (
-    <div className="flex flex-col p-4 bg-[#13131a] rounded-[10px] mb-[10px]">
+    <div className="flex flex-col p-4 bg-[#13131a] rounded-[10px] h-full justify-evenly">
       <p className="font-epilogue font-semibold text-[18px] text-white uppercase leading-[30px] text-center">
         Use raised funds
       </p>

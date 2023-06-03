@@ -8,7 +8,7 @@ export default function FormField({
 }) {
   return (
     <label className="flex flex-col flex-1 w-full">
-      <span className="font-mono font-medium text-lg leading-relaxed mb-[10px]">
+      <span className="font-mono font-medium text-[22px] leading-relaxed mb-[10px] text-white">
         {labelName}
       </span>
       {inputType === "file" ? (
@@ -33,21 +33,20 @@ export default function FormField({
                   d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                 ></path>
               </svg>
-              <p className="mb-2 text-md text-black-500 dark:text-gray-400">
-                <span className="font-semibold">Click to upload</span> or drag
-                and drop
+              <p className="mb-2 text-[18px] text-white dark:text-gray-400">
+                <span className="font-semibold">Click to upload</span>
               </p>
-              <p className="text-sm text-black dark:text-gray-400">
+              <p className="text-[18px] text-white dark:text-gray-400">
                 SVG, PNG or JPG
               </p>
             </div>
             <input
               id="dropzone-file"
               type="file"
-              className="block text-sm text-black file:mr-4 file:py-2 file:px-4
+              className="block text-[16px] text-white file:mr-4 file:py-2 file:px-4
               file:rounded-[10px] file:border-[3px]
-              file:text-sm file:font-semibold
-              file:bg-transparent file:text-black
+              file:text-[16px] file:font-semibold
+              file:bg-[#1c1c24] file:text-white
               hover:file:bg-emerald-500"
               onChange={handleChange}
             />
@@ -55,14 +54,14 @@ export default function FormField({
         </div>
       ) : isTextArea ? (
         <textarea
-          className="placeholder-black caret-black outline-none focus:border-emerald-500 hover:border-emerald-500 text-md py-[15px] px-[15px] border-[3px] bg-transparent rounded-[10px]"
+          className="py-[10px] sm:px-[20px] px-[15px] outline-none focus:border-emerald-500 hover:border-emerald-500 text-[20px] py-[15px] px-[15px] border-[3px] font-epilogue text-black leading-[30px] placeholder:text-black rounded-[10px] bg-transparent"
           placeholder={placeholder}
           value={value}
           onChange={handleChange}
         />
       ) : (
         <input
-          className="placeholder-black caret-black outline-none focus:border-emerald-500 hover:border-emerald-500 text-md py-[15px] px-[15px] border-[3px] bg-transparent rounded-[10px]"
+          className="py-[10px] sm:px-[20px] px-[15px] outline-none focus:border-emerald-500 hover:border-emerald-500 text-[20px] py-[15px] px-[15px] border-[3px] font-epilogue text-black leading-[30px] placeholder:text-black rounded-[10px] bg-transparent"
           type={inputType}
           placeholder={placeholder}
           value={value}

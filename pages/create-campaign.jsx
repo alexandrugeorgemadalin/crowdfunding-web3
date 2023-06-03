@@ -113,7 +113,7 @@ export default function CreateCampaign() {
   };
 
   return (
-    <div className="flex flex-col justify-center bg-neutral-500/70 rounded-[10px] mx-20 my-10 p-5">
+    <div className="flex flex-col justify-center  rounded-[10px] mx-20 my-10 p-5 bg-gray-500 bg-opacity-30 backdrop-blur-lg drop-shadow-lg">
       {!modalIsClosed && (
         <Modal
           message={modalMessage}
@@ -126,15 +126,15 @@ export default function CreateCampaign() {
       {(isLoadingWrite || isLoadingTransaction) && (
         <Loader message="Transaction is in progress" />
       )}
-      <div className="flex justify-center items-center p-[16px] rounded-[10px]">
-        <h1 className="font-mono font-bold text-[22px] leading-[38px] text-black">
+      <div className="flex justify-center items-center p-[5px] rounded-[10px]">
+        <h1 className="font-mono font-bold text-[30px] leading-[38px] text-white">
           Start a campaign
         </h1>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col mt-[30px] gap-[15px] w-full"
+        className="flex flex-col mt-[30px] gap-[10px] w-full"
       >
         <FormField
           labelName="Campaign Title*"
@@ -183,12 +183,12 @@ export default function CreateCampaign() {
 
         <div className="flex justify-center items-center mt-[40px]">
           {isDisconnected ? (
-            <h1 className="font-mono font-semibold p-2">
+            <h1 className="font-mono font-semibold p-2 text-white text-[20px]">
               In order to create a campaign, you need to connect your wallet
             </h1>
           ) : (
             <button
-              className="font-mono font-bold text-[18px] text-black min-h-[52px] px-4 rounded-[10px] border-[3px] bg-transparent hover:border-black hover:bg-gradient-to-b hover:from-emerald-500 hover:to-emerald-700"
+              className="font-mono font-bold text-[20px] text-white min-h-[52px] px-4 rounded-[10px] border-[3px] bg-transparent hover:border-black hover:bg-gradient-to-b hover:from-emerald-500 hover:to-emerald-700"
               type="submit"
             >
               Submit new campaign

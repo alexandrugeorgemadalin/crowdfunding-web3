@@ -5,3 +5,24 @@
 body {
   @apply bg-gradient-to-t from-gray-700 to-emerald-500 to-100% min-h-screen;
 }
+
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    width: 15px;
+    height: 10px;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: #13131a;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #44444d;
+    border-radius: 100vh;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #52525e;
+  }
+}

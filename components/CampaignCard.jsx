@@ -10,7 +10,12 @@ export default function CampaignCard({
   const remainingDays = daysLeft(deadline);
 
   return (
-    <div className="sm:w-[288px] sm:h-[220px] w-full rounded-[15px] bg-gray-500 cursor-pointer bg-opacity-30 backdrop-blur-lg drop-shadow-lg">
+    <div
+      className="sm:w-[288px] sm:h-[220px] w-full rounded-[15px] bg-gray-500 cursor-pointer
+      transition ease-in-out delay-150 bg-opacity-30 backdrop-blur-lg drop-shadow-lg
+      hover:-translate-y-6 hover:scale-110 hover:bg-gradient-to-b hover:from-emerald-500
+      hover:to-emerald-700 duration-300"
+    >
       <div className="flex flex-col p-4">
         <h3 className="font-mono font-sm font-semibold text-white text-center">
           {title}
