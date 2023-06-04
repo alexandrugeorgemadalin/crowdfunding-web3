@@ -127,7 +127,7 @@ export default function CreateCampaign() {
         <Loader message="Transaction is in progress" />
       )}
       <div className="flex justify-center items-center p-[5px] rounded-[10px]">
-        <h1 className="font-mono font-bold text-[30px] leading-[38px] text-white">
+        <h1 className="font-mono font-bold text-[30px] leading-[38px] text-black">
           Start a campaign
         </h1>
       </div>
@@ -183,12 +183,12 @@ export default function CreateCampaign() {
 
         <div className="flex justify-center items-center mt-[40px]">
           {isDisconnected ? (
-            <h1 className="font-mono font-semibold p-2 text-white text-[20px]">
+            <h1 className="font-mono font-semibold p-2 text-black text-[20px]">
               In order to create a campaign, you need to connect your wallet
             </h1>
           ) : (
             <button
-              className="font-mono font-bold text-[20px] text-white min-h-[52px] px-4 rounded-[10px] border-[3px] bg-transparent hover:border-black hover:bg-gradient-to-b hover:from-emerald-500 hover:to-emerald-700"
+              className="font-mono font-bold text-[20px] text-black min-h-[52px] px-4 rounded-[10px] border-[3px] bg-transparent hover:border-black hover:bg-gradient-to-b hover:from-emerald-500 hover:to-emerald-700"
               type="submit"
             >
               Submit new campaign
