@@ -48,7 +48,7 @@ export default function Donate() {
     <div className="">
       {isLoading && <Loader message="Fetching data" />}
       {!isConnected || campaigns.length == 0 ? (
-        <WarningCard />
+        <WarningCard message="You either are not connected or you do not have any campaigns" />
       ) : (
         <div className="flex flex-wrap mt-[20px] mx-[200px] gap-[40px]">
           {campaigns.map((campaign, i) => (

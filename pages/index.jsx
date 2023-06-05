@@ -14,7 +14,7 @@ export default function Home() {
         <div className="text-center text-[25px] font-sans font-semibold">
           Driving Social Impact through Decentralized Giving
         </div>
-        <div className="flex flex-row justify-around mt-[100px] gap-[200px]">
+        <div className="flex flex-row justify-around mt-[100px]">
           <OptionCard
             title="Start a campaign"
             description="Take the first step towards making a difference by creating your own impactful campaign"
@@ -68,7 +68,7 @@ export default function Home() {
             ))}
           </div>
           <div className="flex flex-col basis-1/2 gap-5">
-            <div className="flex text-black font-semibold font-mono text-[30px] ml-[30px] leading-7 text-[#FFD600]">
+            <div className="flex font-semibold font-mono text-[30px] ml-[30px] leading-7 text-[#FFD600]">
               {activeStep + 1}. {platformSteps[activeStep].title}
             </div>
             <div className="flex ml-[30px] text-black text-[20px] font-mono leading-5 italic">

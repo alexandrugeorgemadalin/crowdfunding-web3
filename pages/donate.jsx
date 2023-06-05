@@ -8,6 +8,7 @@ import { ethers } from "ethers";
 import { useState } from "react";
 import Link from "next/link";
 import Loader from "@/components/Loader";
+import WarningCard from "@/components/WarningCard";
 
 export default function Donate() {
   const [campaigns, setCampaigns] = useState([]);
@@ -38,6 +39,9 @@ export default function Donate() {
   return (
     <div className="flex flex-wrap mt-[20px] mx-[200px] gap-[40px]">
       {isLoading && <Loader message="Fetching data" />}
+      {campaigns.length == 0 && (
+        <WarningCard message="There are no campaigns yet" />
+      )}
       {campaigns.map((campaign, i) => (
         <Link href={`/campaign/${i}`} key={i}>
           <CampaignCard key={i} {...campaign} />
